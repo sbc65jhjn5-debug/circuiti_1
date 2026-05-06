@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
 
@@ -47,3 +48,9 @@ if __name__ == "__main__":
 
     voltmetro_3_2 = np.array ([3.004, 4.204, 6.504, 8.91, 11.01, 13.32, 15.72])
     amperometro_3_2 = np.array ([0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007])
+
+    # plot  per la resistenza R 1
+
+    fig, ax = plt.subplots (nrows = 2, ncols = 1)
+
+    ax.set_title ("Andamento dell'intensità di corrente in funzione della tensione")

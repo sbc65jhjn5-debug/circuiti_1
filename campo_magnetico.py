@@ -5,7 +5,7 @@ from iminuit.cost import LeastSquares
 from scipy.stats import chi2
 
 def B_bobina (N, L, I, r) :
-    return (4 * np.pi * 1e-7) * N * I / 2* np.sqrt (r**2 + (L/2)**2)
+    return (4 * np.pi * 1e-7) * N * I / (2* np.sqrt (r**2 + (L/2)**2))
 
 def tan_angoli (I, N, L, r, B_t):
     B_b = B_bobina (N, L, I, r)
@@ -113,7 +113,7 @@ sigma_deg = np.array (np.std (deg_spento)/np.sqrt(len(deg_spento)) * np.ones (19
 for sigma in sigma_deg: print (f"{sigma:.2f}°")
 
 tangenti = np.tan (np.radians (deg))
-sigma_tangenti = sigma_deg * (1 / np.cos (np.radians (deg)))**2
+sigma_tangenti = np.radians(sigma_deg) * (1 / np.cos(np.radians(deg)))**2
 
 ls1 = LeastSquares (I, tangenti, sigma_tangenti, tan_angoli)
 
@@ -129,7 +129,7 @@ for par, val, err in zip (m1.parameters, m1.values, m1.errors) :
 
 B_fit = m1.values["B_t"]
 
-sigma_tot = np.sqrt (np.array ([sigma_I (sigma_d, th, B_fit, raggio, lunghezza, N = 31)**2 for sigma_d, th in zip (sigma_deg, deg)]) + sigma_tangenti**2)
+sigma_tot = np.sqrt (np.array ([sigma_I (np.radians (sigma_d), np.radians (th), B_fit, raggio, lunghezza, N = 31)**2 for sigma_d, th in zip (sigma_deg, deg)]) + sigma_tangenti**2)
 
 ls2 = LeastSquares (I, tangenti, sigma_tot, tan_angoli)
 
@@ -152,3 +152,21 @@ B_fit_errore = m2.errors["B_t"]
 
 print (f"Otteniamo: B terrestre = {B_fit_2:.5e} ± {B_fit_errore:.5e}")
 print (f"chi 2: {chi_2}\nndof: {ndof}\np value:{p_value}")
+
+# grafico
+
+fig, ax = plt.subplots ()
+
+ax.set_title ("EH boh...")
+ax.set_xlabel ("intensità di corrente $\\I$")
+ax.set_ylabel ("tan $\\theta$")
+
+ax.errorbar (I, tangenti,
+             yerr = sigma_tangenti,
+             xerr = 0.001
+             )
+
+ax.plot (I, tan_angoli (I, 31, raggio, lunghezza, B_fit_2),
+         color = "magenta")
+
+plt.show ()

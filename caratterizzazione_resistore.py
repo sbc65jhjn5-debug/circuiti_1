@@ -39,8 +39,8 @@ if __name__ == "__main__":
     # Configurazione 1, R 3
 
     voltmetro_3_1 = np.array ([3.004, 5.205, 8.01, 11.21, 14.01, 17.01])
-    amperometro_3_1 = np.array ([0.001, 0.002, 0.003, 0.004, 0.005, 0.006]) # mA
-    sigma_3_1 = np.array (0.0012 * np.ones (len (voltmetro_3_1))) # V (da mettere del micro...)
+    amperometro_3_1 = np.array ([0.001, 0.002, 0.003, 0.004, 0.005, 0.006]) * 1e3 # micro A
+    sigma_3_1 = np.array (0.00226 * np.ones (len (voltmetro_3_1))) # micro A
 
     # Configurazione 2, R 1 (buona per stima R1)
 
@@ -56,9 +56,10 @@ if __name__ == "__main__":
 
     # Configurazione 2, R 3
 
-    voltmetro_3_2 = np.array ([3.004, 4.204, 6.504, 8.91, 11.01, 13.32, 15.72])
-    amperometro_3_2 = np.array ([0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007])
-    sigma_3_2 = np.array (0.0012 * np.ones (len (voltmetro_3_2))) # V (da mettere del micro...)
+    voltmetro_3_2 = np.array ([4.204, 6.504, 8.91, 11.01, 13.32, 15.72])
+    amperometro_3_2 = np.array ([0.002, 0.003, 0.004, 0.005, 0.006, 0.007]) * 1e3 # micro A
+    sigma_3_2 = np.array (0.00226 * np.ones (len (voltmetro_3_2))) # micro A
+    # NB abbiamo tolto (3.004, 0.001) perché è un punto che non segue la tendenza degli altri
 
     # Fit per la resistenza R 1
 
@@ -182,7 +183,7 @@ if __name__ == "__main__":
                        )
     
     m31 = Minuit (ls31, 
-                R = R_3 * 1e-3 # kΩ
+                R = R_3 * 1e-6 # MΩ
                 )
     
 
@@ -200,7 +201,7 @@ if __name__ == "__main__":
                        )
     
     m32 = Minuit (ls32,
-                R = R_3 * 1e-3 # kΩ
+                R = R_3 * 1e-6 # MΩ
                 )
     
     m32.migrad ()
@@ -216,15 +217,15 @@ if __name__ == "__main__":
 
     ax[0].set_title ("Andamento dell'intensità di corrente in funzione della tensione")
     ax[0].set_xlabel ("tensione (V)")
-    ax[0].set_ylabel ("intensità di corrente (mA)")
+    ax[0].set_ylabel ("intensità di corrente ($\\mu$A)")
     ax[0].errorbar (voltmetro_3_1, amperometro_3_1, yerr = sigma_3_1, capsize = 5, fmt = "o", linestyle = "None", color = "darkgreen", label = "configurazione 1")
-    ax[0].plot (voltmetro_3_1, I (voltmetro_3_1, R_fit31), "-", color = "darkgreen", label = f"fit configurazione 1, R = {R_fit31:.3f} kΩ")
+    ax[0].plot (voltmetro_3_1, I (voltmetro_3_1, R_fit31), "-", color = "darkgreen", label = f"fit configurazione 1, R = {R_fit31:.3f} MΩ")
     ax[0].legend () 
     ax[0].grid ()
     ax[1].errorbar (voltmetro_3_2, amperometro_3_2, yerr = sigma_3_2, capsize = 5, fmt = "o", linestyle = "None", color = "brown", label = "configurazione 2")
-    ax[1].plot (voltmetro_3_2, I (voltmetro_3_2, R_fit32), "-", color = "brown", label = f"fit configurazione 2, R = {R_fit32:.3f} kΩ")
+    ax[1].plot (voltmetro_3_2, I (voltmetro_3_2, R_fit32), "-", color = "brown", label = f"fit configurazione 2, R = {R_fit32:.3f} MΩ")
     ax[1].set_xlabel ("tensione (V)")
-    ax[1].set_ylabel ("intensità di corrente (mA)")
+    ax[1].set_ylabel ("intensità di corrente ($\\mu$A)")
     ax[1].legend ()
     ax[1].grid ()
     plt.show ()

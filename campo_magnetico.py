@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from iminuit import Minuit
 from iminuit.cost import LeastSquares
+from scipy.stats import chi2
 
 def B_bobina (N, L, I, r) :
     return (4 * np.pi * 1e-7) * N * I / 2* np.sqrt (r**2 + (L/2)**2)
@@ -9,6 +10,11 @@ def B_bobina (N, L, I, r) :
 def tan_angoli (I, N, L, r, B_t):
     B_b = B_bobina (N, L, I, r)
     return B_b / B_t
+
+def sigma_I (sigma_theta, theta, B_fit, r, L, N):
+    dI = 2 * B_fit * np.sqrt (r**2 + L**2/4) / (4 * np.pi * 1e-7 * N) * 1 / (1 + theta**2)
+    sigma = dI * sigma_theta
+    return sigma
 
 deg_spento = np.array ([85, 86, 87, 90, 90, 90, 91, 92, 86, 91, 92, 93, 91, 92, 93, 90])
 print (np.mean (deg_spento))
@@ -122,3 +128,27 @@ for par, val, err in zip (m1.parameters, m1.values, m1.errors) :
     print (f"{par} = {val:.5e} ± {err:.5e}")
 
 B_fit = m1.values["B_t"]
+
+sigma_tot = np.sqrt (np.array ([sigma_I (sigma_d, th, B_fit, raggio, lunghezza, N = 31)**2 for sigma_d, th in zip (sigma_deg, deg)]) + sigma_tangenti**2)
+
+ls2 = LeastSquares (I, tangenti, sigma_tot, tan_angoli)
+
+m2 = Minuit (ls2, N = 31, L = lunghezza, r = raggio, B_t = 2e-5)
+m2.fixed["N"] = True
+m2.fixed["L"] = True
+m2.fixed["r"] = True
+
+m2.migrad ()
+
+for par, val, err in zip (m2.parameters, m2.values, m2.errors) :
+    print (f"{par} = {val:.5e} ± {err:.5e}")
+
+chi_2 = m2.fval
+ndof = m2.ndof
+p_value = chi2.sf (chi_2, ndof)
+
+B_fit_2 = m2.values["B_t"]
+B_fit_errore = m2.errors["B_t"]
+
+print (f"Otteniamo: B terrestre = {B_fit_2:.5e} ± {B_fit_errore:.5e}")
+print (f"chi 2: {chi_2}\nndof: {ndof}\np value:{p_value}")

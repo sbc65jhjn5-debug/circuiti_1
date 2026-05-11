@@ -11,9 +11,9 @@ def tan_angoli (I, N, L, r, B_t):
     B_b = B_bobina (N, L, I, r)
     return B_b / B_t
 
-def sigma_I (sigma_theta, theta, B_fit, r, L, N):
+def sigma_I (sigma_corr, theta, B_fit, r, L, N):
     dI = 2 * B_fit * np.sqrt (r**2 + L**2/4) / (4 * np.pi * 1e-7 * N) * 1 / (1 + theta**2)
-    sigma = dI * sigma_theta
+    sigma = dI * sigma_corr
     return sigma
 
 deg_spento = np.array ([85, 86, 87, 90, 90, 90, 91, 92, 86, 91, 92, 93, 91, 92, 93, 90])
@@ -24,7 +24,7 @@ raggio = 25.00e-2 / 2 # m
 
 # per errore di I vedere video Ampere
 I = np.array ([0.10200, 
-               0.10525, 
+               0.15025, 
                0.20275, 
                0.25310, 
                0.30336, 
@@ -44,6 +44,7 @@ I = np.array ([0.10200,
                1.00593
                ])
 
+sigma_corrente = 0.0005 # DA INSERIRE IL VALORE CORRETTO
 
 deg_1 = np.array([61, 61, 61, 60, 61, 61, 61, 61, 62, 62, 63, 63, 64, 64, 63, 64, 64, 63, 64, 63, 62])
 deg_2 = np.array([52, 53, 54])
@@ -129,7 +130,7 @@ for par, val, err in zip (m1.parameters, m1.values, m1.errors) :
 
 B_fit = m1.values["B_t"]
 
-sigma_tot = np.sqrt (np.array ([sigma_I (np.radians (sigma_d), np.radians (th), B_fit, raggio, lunghezza, N = 31)**2 for sigma_d, th in zip (sigma_deg, deg)]) + sigma_tangenti**2)
+sigma_tot = np.sqrt (np.array ([sigma_I (sigma_corrente, np.radians (th), B_fit, raggio, lunghezza, N = 31)**2 for th in deg]) + sigma_tangenti**2)
 
 ls2 = LeastSquares (I, tangenti, sigma_tot, tan_angoli)
 
@@ -158,15 +159,20 @@ print (f"chi 2: {chi_2}\nndof: {ndof}\np value:{p_value}")
 fig, ax = plt.subplots ()
 
 ax.set_title ("EH boh...")
-ax.set_xlabel ("intensità di corrente $\\I$")
+ax.set_xlabel ("intensità di corrente $I$")
 ax.set_ylabel ("tan $\\theta$")
 
 ax.errorbar (I, tangenti,
              yerr = sigma_tangenti,
-             xerr = 0.001
+             xerr = 0.0005, # DA INSERIRE IL VALORE CORRETTO,
+             marker = "o",
+             linestyle = "None",
+             capsize = 4,
+             color = "indigo",
+             label = "Dati osservati"
              )
 
-ax.plot (I, tan_angoli (I, 31, raggio, lunghezza, B_fit_2),
+ax.plot (I, tan_angoli (I, 31, lunghezza, raggio, B_fit_2),
          color = "magenta")
 
 plt.show ()

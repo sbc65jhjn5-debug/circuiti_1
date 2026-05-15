@@ -14,9 +14,9 @@ def tan_angoli (I, N, L, r, offset, B_t):
     return B_b / B_t
 
 def sigma_theta (sigma_corr, I, B_fit, r, sigma_r, L, sigma_L, N):
-    dtheta_dI =  1/ B_fit * (4 * np.pi * 1e-7) * N / (2* np.sqrt (r**2 + (L/2)**2))
-    dtheta_dr = 1 / B_fit * (8 * np.pi * 1e-7) * N * I * r / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
-    dtheta_dL = 1 / B_fit * (2 * np.pi * 1e-7) * N * I * L / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
+    dtheta_dI =  B_fit * (4 * np.pi * 1e-7) * N / (2* np.sqrt (r**2 + (L/2)**2))
+    dtheta_dr = B_fit * (8 * np.pi * 1e-7) * N * I * r / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
+    dtheta_dL = B_fit * (2 * np.pi * 1e-7) * N * I / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
     sigma = np.sqrt ((dtheta_dI * sigma_corr)**2 + (dtheta_dr * sigma_r)**2 + (dtheta_dL * sigma_L)**2)
     return sigma
 
@@ -59,10 +59,11 @@ I = np.array ([0.10200,
                0.60600,
                0.65598,
                0.70580,
-               0.75565
+               0.75565,
+               0.80595
                ])
 
-sigma_corrente = 0.00003 # DA INSERIRE IL VALORE CORRETTO
+sigma_corrente = 0.0005 # DA INSERIRE IL VALORE CORRETTO
 
 deg_1 = np.array([61, 61, 61, 60, 61, 61, 61, 61, 62, 62, 63, 63, 64, 64, 63, 64, 64, 63, 64, 63, 62])
 deg_2 = np.array([52, 53, 54])
@@ -78,9 +79,10 @@ deg_11 = np.array([23, 23, 23, 24])
 deg_12 = np.array([22, 22, 22, 21])
 deg_13 = np.array([20, 20, 21])
 deg_14 = np.array([20, 20, 19])
+deg_15 = np.array([19, 19, 19, 18])
 
 
-deg = np.array (np.mean (deg_spento) * np.ones (14) - [np.mean(deg_1), 
+deg = np.array (np.mean (deg_spento) * np.ones (15) - [np.mean(deg_1), 
                  np.mean(deg_2), 
                  np.mean(deg_3), 
                  np.mean(deg_4),
@@ -93,13 +95,14 @@ deg = np.array (np.mean (deg_spento) * np.ones (14) - [np.mean(deg_1),
                  np.mean(deg_11),
                  np.mean(deg_12),
                  np.mean(deg_13),
-                 np.mean(deg_14)
+                 np.mean(deg_14),
+                 np.mean(deg_15)
                  ])
 
 for angolo in deg: print (f"{angolo:.2f}°")
 
 # sigmi:
-sigma_deg = np.array (np.std (deg_spento)/np.sqrt(len(deg_spento)) * np.ones (14) + [np.std(deg_1, ddof = 1)/np.sqrt(len(deg_1)), 
+sigma_deg = np.array (np.std (deg_spento)/np.sqrt(len(deg_spento)) * np.ones (15) + [np.std(deg_1, ddof = 1)/np.sqrt(len(deg_1)), 
                        np.std(deg_2, ddof = 1)/np.sqrt(len(deg_2)), 
                        np.std(deg_3, ddof = 1)/np.sqrt(len(deg_3)), 
                        np.std(deg_4, ddof = 1)/np.sqrt(len(deg_4)),
@@ -112,10 +115,11 @@ sigma_deg = np.array (np.std (deg_spento)/np.sqrt(len(deg_spento)) * np.ones (14
                        np.std(deg_11, ddof = 1)/np.sqrt(len(deg_11)),
                        np.std(deg_12, ddof = 1)/np.sqrt(len(deg_12)),
                        np.std(deg_13, ddof = 1)/np.sqrt(len(deg_13)),
-                       np.std(deg_14, ddof = 1)/np.sqrt(len(deg_14))
+                       np.std(deg_14, ddof = 1)/np.sqrt(len(deg_14)),
+                       np.std(deg_15, ddof = 1)/np.sqrt(len(deg_15))
                       ])
 
-sigma_deg = sigma_deg + (np.ones(14) * (1.0/np.sqrt(12)))
+sigma_deg = sigma_deg + (np.ones(15) * (1.0/np.sqrt(12)))
 
 for sigma in sigma_deg: print (f"{sigma:.2f}°")
 
@@ -168,13 +172,13 @@ print (f"chi 2: {chi_2}\nndof: {ndof}\np value:{p_value}")
 
 fig, ax = plt.subplots ()
 
-ax.set_title ("Fit per stimare il campo magnetico terrestre")
-ax.set_xlabel ("intensità di corrente $I$ (A)")
+ax.set_title ("EH boh...")
+ax.set_xlabel ("intensità di corrente $I$")
 ax.set_ylabel ("tan $\\theta$")
 
 ax.errorbar (I, tangenti,
              yerr = sigma_tot,
-             xerr = 0.00003, # DA INSERIRE IL VALORE CORRETTO,
+             xerr = 0.0005, # DA INSERIRE IL VALORE CORRETTO,
              marker = "o",
              linestyle = "None",
              capsize = 4,
@@ -183,33 +187,10 @@ ax.errorbar (I, tangenti,
              )
 
 ax.plot (I, tan_angoli (I, 31, lunghezza, raggio, offset_fit, B_fit_2),
-         color = "crimson",
-         label = "$\\tan \\theta = \\frac{B_{bobina}}{B_{terrestre}}$ "
-         )
+         color = "crimson")
 
-plt.legend (fontsize=13)
-plt.grid (True)
 plt.show ()
 
-
-# Grafico dei residui 
-
-residui = tangenti - tan_angoli (I, 31, lunghezza, raggio, offset_fit, B_fit_2)
-
-fig, ax = plt.subplots ()
-ax.set_title ("Residui del fit per il campo magnetico terrestre")
-ax.errorbar (I, residui,
-             yerr = sigma_tot,
-             xerr = 0.00003,
-             marker = "^",
-             linestyle = "None",
-             capsize = 4,
-             color = "indigo"
-             )
-
-plt.axhline (0, color = "crimson", linestyle = "--")
-plt.grid (True)
-plt.show ()
 '''
 # formula per SPIRE:
 
@@ -254,12 +235,12 @@ print (f"chi 2: {chi_2_4}\nndof: {ndof_4}\np value:{p_value_4}")
 fig, ax = plt.subplots ()
 
 ax.set_title ("EH boh...")
-ax.set_xlabel ("intensità di corrente $I$ (A)")
+ax.set_xlabel ("intensità di corrente $I$")
 ax.set_ylabel ("tan $\\theta$")
 
 ax.errorbar (I, tangenti,
              yerr = sigma_tangenti,
-             xerr = 0.00003, # DA INSERIRE IL VALORE CORRETTO,
+             xerr = 0.0005, # DA INSERIRE IL VALORE CORRETTO,
              marker = "o",
              linestyle = "None",
              capsize = 4,

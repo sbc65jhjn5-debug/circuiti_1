@@ -322,7 +322,7 @@ ax.plot(
     I_plot,
     theta_model(I_plot, N_spire, lunghezza, raggio, B_fit, theta0_fit),
     color="crimson",
-    label="$\\theta = \\arctan(B_{bobina}/B_T) + \\theta_0$",
+    label="$\\theta = \\arctan \\frac{B_{bobina}}{B_T} + \\theta_0$",
 )
 
 ax.plot(
@@ -330,10 +330,10 @@ ax.plot(
     theta_model_disallineato(I_plot, N_spire, lunghezza, raggio, B_phi_fit, theta0_phi_fit, phi_fit),
     color="darkgreen",
     linestyle="--",
-    label="$\\theta = \\arctan2(B_{bobina}\\sin\\phi, B_T+B_{bobina}\\cos\\phi)+\\theta_0$",
+    label="$\\theta = \\arctan \\frac{B_{bobina}\\sin\\phi} {B_T+B_{bobina}\\cos\\phi} + \\theta_0$",
 )
 
-ax.legend(fontsize=11)
+ax.legend(fontsize=12)
 ax.grid(True)
 plt.tight_layout()
 plt.show()
@@ -350,7 +350,7 @@ ax.errorbar(
     pull,
     yerr=np.ones_like(pull),
     xerr=0.00003,
-    marker="o",
+    marker="^",
     linestyle="None",
     capsize=4,
     color="indigo",

@@ -87,5 +87,26 @@ ax.set_ylabel ("frequenza")
 
 plt.show()
 
+# errori corrente bobina
+
+with open ("errori_corrente_bobina.txt", "r") as f:
+    errori_bobina = np.array ([float (x) for x in f.read ().split ()])
+
+I_medio = np.mean (errori_bobina)
+I_std = np.std (errori_bobina, ddof = 1)
+print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
+print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A): {I_std:.5f} $\\mu$A")
+
+n_bins_1 = 9
+bin_edges_1 = np.linspace (min (errori_bobina), max (errori_bobina), n_bins_1 + 1)
+
+fig, ax = plt.subplots ()
+
+ax.set_title ("Distribuzione del valore di $I$ per una misura generica")
+ax.hist (errori_bobina, bins = bin_edges_1, color = "thistle")
+ax.set_xlabel ("intensità di corrente ($\\mu$A)")
+ax.set_ylabel ("frequenza")
+
+plt.show()
 
 

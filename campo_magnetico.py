@@ -184,7 +184,7 @@ ax.set_ylabel ("tan $\\theta$")
 
 ax.errorbar (I, tangenti,
              yerr = sigma_tangenti,
-             xerr = 0.0005, # DA INSERIRE IL VALORE CORRETTO,
+             xerr = 0.00003, # DA INSERIRE IL VALORE CORRETTO,
              marker = "o",
              linestyle = "None",
              capsize = 4,
@@ -246,7 +246,7 @@ print (f"chi 2: {chi_2_4}\nndof: {ndof_4}\np value:{p_value_4}")
 
 #ax.errorbar (I, tangenti,
 #             yerr = sigma_tangenti,
-#             xerr = 0.0005, # DA INSERIRE IL VALORE CORRETTO,
+#             xerr = 0.00003, # DA INSERIRE IL VALORE CORRETTO,
 #             marker = "o",
 #             linestyle = "None",
 #             capsize = 4,

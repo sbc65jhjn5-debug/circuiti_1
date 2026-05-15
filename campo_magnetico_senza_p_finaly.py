@@ -13,13 +13,14 @@ def tan_angoli (I, N, L, r, offset, B_t):
     B_b = B_bobina (N, L, I, r, offset)
     return B_b / B_t
 
-def sigma_theta_I (sigma_corr, I, B_fit, r, sigma_r, L, sigma_L, N):
+def sigma_theta (sigma_corr, I, B_fit, r, sigma_r, L, sigma_L, N):
     dtheta_dI =  B_fit * (4 * np.pi * 1e-7) * N / (2* np.sqrt (r**2 + (L/2)**2))
     dtheta_dr = B_fit * (8 * np.pi * 1e-7) * N * I * r / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
     dtheta_dL = B_fit * (2 * np.pi * 1e-7) * N * I / (4 * np.sqrt(r**2 + (L/2)**2)* (r**2 + (L/2)**2))
     sigma = np.sqrt ((dtheta_dI * sigma_corr)**2 + (dtheta_dr * sigma_r)**2 + (dtheta_dL * sigma_L)**2)
     return sigma
 
+'''
 # fit 'Spire':
 
 def B_spire (N, r, I):
@@ -34,6 +35,8 @@ def sigma_theta_I_spire (sigma_corr, theta, B_fit, r, N):
     sigma = dI * sigma_corr
     return sigma
 
+VIENE MEGLIO CON L'ALTRO OLE
+'''
 
 
 deg_spento = np.array ([85, 86, 87, 90, 90, 90, 91, 92, 86, 91, 92, 93, 91, 92, 93, 90])
@@ -139,7 +142,7 @@ for par, val, err in zip (m1.parameters, m1.values, m1.errors) :
 
 B_fit = m1.values["B_t"]
 
-sigma_tot = np.sqrt (np.array ([sigma_theta_I (sigma_corrente, I_val, B_fit, raggio, 0.001, lunghezza, 0.001, N = 31)**2 for I_val in I]) + sigma_tangenti**2)
+sigma_tot = np.sqrt (np.array ([sigma_theta (sigma_corrente, I_val, B_fit, raggio, 0.001, lunghezza, 0.001, N = 31)**2 for I_val in I]) + sigma_tangenti**2)
 
 ls2 = LeastSquares (I, tangenti, sigma_tot, tan_angoli)
 

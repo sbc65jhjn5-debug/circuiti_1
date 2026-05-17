@@ -43,7 +43,7 @@ ax.set_ylabel ("frequenza")
 
 plt.show()
 
-# errori dildo 1
+# errori dildo 1 (configurazione 1)
 
 with open ("errori_dildo1.txt", "r") as f:
     errori_dildo1 = np.array ([float (x) for x in f.read ().split ()])
@@ -51,7 +51,7 @@ with open ("errori_dildo1.txt", "r") as f:
 I_medio = np.mean (errori_dildo1)
 I_std = np.std (errori_dildo1, ddof = 1)
 print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
-print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A): {I_std:.5f} $\\mu$A")
+print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A dildo 1): {I_std:.5f} $\\mu$A")
 
 n_bins_1 = 8
 bin_edges_1 = np.linspace (min (errori_dildo1), max (errori_dildo1), n_bins_1 + 1)
@@ -65,7 +65,7 @@ ax.set_ylabel ("frequenza")
 
 plt.show()
 
-# errori dildo 2
+# errori dildo 2 (punti finali della configurazione 1)
 
 with open ("errori_dildo_2.txt", "r") as f:
     errori_dildo2 = np.array ([float (x) for x in f.read ().split ()])
@@ -73,7 +73,7 @@ with open ("errori_dildo_2.txt", "r") as f:
 I_medio = np.mean (errori_dildo2)
 I_std = np.std (errori_dildo2, ddof = 1)
 print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
-print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A): {I_std:.5f} $\\mu$A")
+print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A dildo 2): {I_std:.5f} $\\mu$A")
 
 n_bins_1 = 10
 bin_edges_1 = np.linspace (min (errori_dildo2), max (errori_dildo2), n_bins_1 + 1)

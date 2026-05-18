@@ -75,7 +75,7 @@ I_std = np.std (errori_dildo2, ddof = 1)
 print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
 print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A dildo 2): {I_std:.5f} $\\mu$A")
 
-n_bins_1 = 10
+n_bins_1 = 7
 bin_edges_1 = np.linspace (min (errori_dildo2), max (errori_dildo2), n_bins_1 + 1)
 
 fig, ax = plt.subplots ()
@@ -86,6 +86,52 @@ ax.set_xlabel ("intensità di corrente ($\\mu$A)")
 ax.set_ylabel ("frequenza")
 
 plt.show()
+
+# errori dildo 3 (configurazione 2, punti iniziali)
+
+with open ("errori_dildo_3.txt", "r") as f:
+    errori_dildo3 = np.array ([float (x) for x in f.read ().split ()])
+
+I_medio = np.mean (errori_dildo3)
+I_std = np.std (errori_dildo3, ddof = 1)
+print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
+print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A dildo 3): {I_std:.5f} $\\mu$A")
+
+n_bins = 9
+bin_edges = np.linspace (min (errori_dildo3), max (errori_dildo3), n_bins + 1)
+
+fig, ax = plt.subplots ()
+
+ax.set_title ("Distribuzione del valore di $I$ per una misura generica")
+ax.hist (errori_dildo3, bins = bin_edges, color = "lightsteelblue")
+ax.set_xlabel ("intensità di corrente ($\\mu$A)")
+ax.set_ylabel ("frequenza")
+
+plt.show()
+
+
+# errori dildo 4 (configurazione 2, punti finali)
+
+with open ("errori_dildo_4.txt", "r") as f:
+    errori_dildo4 = np.array ([float (x) for x in f.read ().split ()])
+
+I_medio = np.mean (errori_dildo4)
+I_std = np.std (errori_dildo4, ddof = 1)
+print (f"Valore medio di I: {I_medio:.5f} $\\mu$A")
+print (f"Deviazione standard di I (errore da utilizzare per misure con $\\mu$A dildo 4): {I_std:.5f} $\\mu$A")
+
+n_bins = 8
+bin_edges = np.linspace (min (errori_dildo4), max (errori_dildo4), n_bins + 1)
+
+fig, ax = plt.subplots ()
+
+ax.set_title ("Distribuzione del valore di $I$ per una misura generica")
+ax.hist (errori_dildo4, bins = bin_edges, color = "paleturquoise")
+ax.set_xlabel ("intensità di corrente ($\\mu$A)")
+ax.set_ylabel ("frequenza")
+
+plt.show()
+
 
 # errori corrente bobina
 

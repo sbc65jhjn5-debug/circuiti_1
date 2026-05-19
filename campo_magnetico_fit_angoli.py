@@ -195,10 +195,11 @@ theta_misure = np.array([np.mean(a) for a in misure_angoli])
 theta = theta_spento - theta_misure
 
 sigma_spento = errore_media(deg_spento)
+print (f"Angolo a corrente spenta: {theta_spento:.2f} ± {sigma_spento:.2f} gradi")
 sigma_misure = np.array([errore_media(a) for a in misure_angoli])
-sigma_risoluzione = 1.0 / np.sqrt(12)
+#sigma_risoluzione = 1.0 / np.sqrt(12)
 
-sigma_theta = np.sqrt(sigma_spento**2 + sigma_misure**2 + sigma_risoluzione**2)
+sigma_theta = np.sqrt(sigma_spento**2 + sigma_misure**2)
 
 print("Angoli usati nel fit:")
 for i, th, sig in zip(I, theta, sigma_theta):
@@ -283,13 +284,14 @@ if m.ndof > 0 and m.fval > m.ndof:
 sigma_theta_extra = np.sqrt(sigma_theta**2 + sigma_extra**2)
 
 if sigma_extra > 0:
-    ls_extra = LeastSquares(I, theta, sigma_theta_extra, theta_model)
-    m_extra = Minuit(ls_extra, N=N_spire, L=lunghezza, r=raggio, B_t=B_fit, theta0=theta0_fit)
+    ls_extra = LeastSquares(I, theta, sigma_theta_extra, theta_model_disallineato)
+    m_extra = Minuit(ls_extra, N=N_spire, L=lunghezza, r=raggio, B_t=B_fit, theta0=theta0_fit, phi=phi_fit)
     m_extra.fixed["N"] = True
     m_extra.limits["L"] = (lunghezza - 0.001, lunghezza + 0.001)
     m_extra.limits["r"] = (raggio - 0.001, raggio + 0.001)
     m_extra.limits["B_t"] = (1e-5, 8e-5)
     m_extra.limits["theta0"] = (-20.0, 20.0)
+    m_extra.limits["phi"] = (60.0, 120.0)
     m_extra.migrad()
     m_extra.hesse()
 
@@ -302,7 +304,7 @@ else:
 fig, ax = plt.subplots()
 I_plot = np.linspace(np.min(I), np.max(I), 400)
 
-ax.set_title("Fit del campo magnetico terrestre sugli angoli")
+ax.set_title("Andamento degli angoli in funzione della corrente")
 ax.set_xlabel("intensità di corrente $I$ (A)")
 ax.set_ylabel("$\\theta$ (gradi)")
 
@@ -354,7 +356,7 @@ ax.errorbar(
     linestyle="None",
     capsize=4,
     color="indigo",
-    label="modello ideale",
+    label="modello senza $\\phi$",
 )
 
 ax.errorbar(
